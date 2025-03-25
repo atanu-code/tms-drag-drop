@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useMemo } from "react";
+import React, { useContext, useState, useCallback, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import '../../App.css';
 
@@ -23,7 +23,8 @@ const SlidingBox = () => {
         setTask,
         removeBlinkingBox,
         setWheelState,
-        getPrevWheelState
+        getPrevWheelState,
+        setWorkingStatus
     } = useContext(WheelContext);
 
     const delay = useCallback((ms) =>
@@ -144,6 +145,12 @@ const SlidingBox = () => {
         closeSlidingBox(false);
     }, [task, setWheelState]);
 
+    useEffect(() => {
+        setWorkingStatus(!isOpen)
+
+        // return () => setWorkingStatus(true)
+    }, [isOpen]);
+
     const renderTyreList = useMemo(() => (
         <ul className="tyre-list">
             {tyreList.map((item, index) => (
@@ -181,7 +188,7 @@ const SlidingBox = () => {
                             <h4>Add New Tyre</h4>
                         </div>
                         <div className="popup-info">
-                            <h6>Add new tyre for Axel {task?.INFO[0]} on side {task?.INFO[1]} at {task?.INFO[2]}</h6>
+                            <h6>Axel {task?.INFO[0]} on side {task?.INFO[1]} at {task?.INFO[2]}</h6>
                             <input className="input-element" type="text" placeholder="Search" />
                             <h6 className="info-head">Tyre list</h6>
                         </div>
@@ -282,7 +289,7 @@ const SlidingBox = () => {
                             <button onClick={() => closeSlidingBox()} className="close-btn">
                                 X
                             </button>
-                            <h4>Tyre: {task?.INFO?.source.wheelId}</h4>
+                            <h4>Tyre: {task?.INFO?.source?.wheelId}</h4>
                         </div>
                         <div className="popup-info">
                             <h6 className="info-head">Fill and Confirm</h6>

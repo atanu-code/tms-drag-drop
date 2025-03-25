@@ -84,6 +84,10 @@
   height: 60px;
 }
 
+.drag-img.disabled {
+  cursor: not-allowed;
+}
+
 .wheel-row-cntr {
   width: 68px;
   height: 92px;
@@ -113,6 +117,10 @@
 
 .add-btn {
   cursor: pointer;
+}
+
+.add-btn.disabled {
+  cursor: not-allowed;
 }
 
 .eqpmnt-cntr {

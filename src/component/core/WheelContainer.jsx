@@ -18,17 +18,18 @@ const WheelContainer = React.memo(({ onDrop, wheel }) => {
         setTask,
         blinkingBox,
         addBlinkingBox,
-        existsBlinkingBox
+        existsBlinkingBox,
+        workingStatus
     } = useContext(WheelContext);
 
     const [blinking, setBlinking] = useState(false);
     const [{ isOver }, drop] = useDrop(() => ({
         accept: ItemTypes.IMAGE,
-        drop: onDrop,
+        drop: workingStatus ? onDrop : null,
         collect: (monitor) => ({
-            isOver: !!monitor.isOver(),
+            isOver: workingStatus ? !!monitor.isOver() : false,
         }),
-    }));
+    }), [workingStatus, onDrop]);
 
     // const AddTask = () => {
     //     // setBlinking(true);
@@ -52,6 +53,7 @@ const WheelContainer = React.memo(({ onDrop, wheel }) => {
     }), [wheel]);
 
     const AddTask = useCallback(() => {
+        if (!workingStatus) return; // Prevent action if disabled
         addBlinkingBox(boxToCheck);
         setIsOpen(true);
         setTask({
@@ -74,13 +76,13 @@ const WheelContainer = React.memo(({ onDrop, wheel }) => {
                 wheelId={wheel[3]}
             />
         ) : (
-            <img 
-                className="add-btn" 
-                width={40} 
-                height={40} 
-                src={AddButton} 
+            <img
+                className={workingStatus ? "add-btn" : "add-btn disabled"}
+                width={40}
+                height={40}
+                src={AddButton}
                 alt="Add Wheel"
-                onClick={AddTask} 
+                onClick={AddTask}
             />
         );
     }, [wheel, AddTask]);

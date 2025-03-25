@@ -3,6 +3,7 @@ import { createContext, useCallback, useEffect, useMemo, useRef, useState } from
 export const WheelContext = createContext();
 
 export const WheelProvider = ({ children }) => {
+    const [workingStatus, setWorkingStatus] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
     const [task, setTask] = useState(null);
     const [blinkingBox, setBlinkingBox] = useState([]);
@@ -45,10 +46,6 @@ export const WheelProvider = ({ children }) => {
     };
 
     const handleDrop = useCallback((axelId, item, side, position) => {
-
-        // const newIndex = wheelState.findIndex((itemVal) => itemVal.axelId === axelId);
-
-        // console.log(wheelState, newIndex, axelId, item, side, position, wheelState[newIndex]['wheel_container'][side][position], 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbb')
 
         setIsOpen(true);
         setTask({
@@ -166,6 +163,8 @@ export const WheelProvider = ({ children }) => {
         wheelState,
         task,
         blinkingBox,
+        workingStatus,
+        setWorkingStatus,
         setIsOpen,
         setTask,
         setWheelState,
@@ -181,6 +180,7 @@ export const WheelProvider = ({ children }) => {
         wheelState,
         task,
         blinkingBox,
+        workingStatus,
         handleDrop,
         handleInvtDrop,
         addBlinkingBox,

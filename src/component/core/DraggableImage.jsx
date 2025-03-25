@@ -20,17 +20,19 @@ const DraggableImage = React.memo(({
     const {
         setIsOpen,
         setTask,
-        addBlinkingBox
+        addBlinkingBox,
+        workingStatus
     } = useContext(WheelContext);
 
     // Memoize drag configuration
     const dragConfig = useMemo(() => ({
         type: ITEM_TYPES.IMAGE,
-        item: { axelId, side, position, wheelId },
+        item: workingStatus ? { axelId, side, position, wheelId } : null,
         collect: (monitor) => ({
-            isDragging: !!monitor.isDragging(),
+            // isDragging: !!monitor.isDragging(),
+            isDragging: workingStatus ? !!monitor.isDragging() : false,
         }),
-    }), [axelId, side, position, wheelId]);
+    }), [axelId, side, position, wheelId, workingStatus]);
 
     // Use useDrag with memoized config
     const [{ isDragging }, drag] = useDrag(() => dragConfig, [dragConfig]);
@@ -38,6 +40,7 @@ const DraggableImage = React.memo(({
     // Memoize click handlers to prevent unnecessary re-renders
 
     const handleClick = useCallback(() => {
+        if (!workingStatus) return;
         if (clickTimeout) return;
 
         const timeout = setTimeout(() => {
@@ -62,15 +65,16 @@ const DraggableImage = React.memo(({
         }, 300);
 
         setClickTimeout(timeout);
-    }, [clickTimeout, wheelId, axelId, side, position]);
+    }, [clickTimeout, wheelId, axelId, side, position, workingStatus]);
 
     const handleDoubleClick = useCallback(() => {
+        if (!workingStatus) return;
         if (clickTimeout) {
             clearTimeout(clickTimeout);
             setClickTimeout(null);
         }
         console.log(`Double Click: ${wheelId}, axelId: ${axelId}, wheelContainerPosition: ${side} ${position}`);
-    }, [clickTimeout, wheelId, axelId, side, position]);
+    }, [clickTimeout, wheelId, axelId, side, position, workingStatus]);
 
     // Memoize inline styles
     const dragStyles = useMemo(() => ({
@@ -80,14 +84,16 @@ const DraggableImage = React.memo(({
     return (
         <div
             ref={drag}
-            aria-label={`Draggable ${wheelId}`}
-            onClick={handleClick}
-            onDoubleClick={handleDoubleClick}
-            style={dragStyles}
+            onClick={!workingStatus ? undefined : () => handleClick(axelId, side, position, wheelId)}
+            onDoubleClick={!workingStatus ? undefined : () => handleDoubleClick(axelId, side, position, wheelId)}
+            style={{
+                opacity: !workingStatus ? 0.3 : (isDragging ? 0.2 : 1),
+                pointerEvents: !workingStatus ? 'none' : 'auto'
+            }}
             className="drag-cntr"
         >
             <img
-                className="drag-img"
+                className={workingStatus ? "drag-img" : "drag-img disabled"}
                 src={WheelImage}
                 alt={`Wheel ${wheelId}`}
             />
